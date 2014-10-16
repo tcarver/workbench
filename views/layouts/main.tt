@@ -1,0 +1,28 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=[% settings.charset %]" />
+<title>WorkBench</title>
+
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css?1412239857" rel="stylesheet">
+<link rel="stylesheet" href="[% request.uri_base %]/css/style.jstree.css" />
+
+
+<!-- Grab jQuery from a CDN, fall back to local if necessary -->
+<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+<script src="[% request.uri_base %]/javascripts/jstree.min.js"></script>
+<script src="[% request.uri_base %]/javascripts/workbench.js"></script>
+
+<script type="text/javascript">/* <![CDATA[ */
+    !window.jQuery && document.write('<script type="text/javascript" src="[% request.uri_base %]/javascripts/jquery.min.js"><\/script>')
+/* ]]> */</script>
+
+</head>
+<body>
+[% content %]
+<div id="footer">
+
+</div>
+</body>
+</html>

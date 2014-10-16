@@ -1,0 +1,44 @@
+
+<script type="text/javascript">
+ $(document).ready(function(){
+	$('#workbench_jstree').jstree({
+   		'core' : {'check_callback' : true }
+    })
+    .on("before_open.jstree", function (e, data) {
+      	gdxbase_workbench.openFolderNode(data, 'workbench_jstree');
+ 	}).delegate("a","click", function(e) {
+      	if ($("#jstree-div").jstree("is_leaf", this)) {
+          	document.location.href = this;
+      	} else {
+        	$("#jstree-div").jstree("toggle_node", this);
+    	}
+   	});
+ 	$('#workbench_jstree').show();
+});
+</script>
+
+<i class="fa fa-home"></i> <b>[% visibility %] [% project %] Lists</b>
+<div id="workbench_jstree" style="display: none;">
+<ul>
+[% FOREACH folder IN tree.keys %]
+  <li>[% folder %] <em>([% tree.$folder.size %] items)</em> <span class="fa fa-info-circle"></span>
+  <ul>
+  [% FOREACH val IN tree.$folder %]
+  	[% IF val.child %] <!-- SUB-FOLDER -->
+  		[% subtree = val.child %]
+  		[% FOREACH childfolder IN subtree.keys %]
+  			<li>[% childfolder %] <em>([% subtree.$childfolder.size %] items)</em> <span class="fa fa-info-circle"></span>
+			<ul>
+  			[% FOREACH leaf IN subtree.$childfolder %]
+  				<li id='[% leaf.passed %]--[% leaf.class %]--[% leaf.oid %]'>[% leaf.class %] [% leaf.oid %]</li>
+  			[% END %]
+  			</ul></li>
+  		[% END %]
+  	[% ELSE %] <!-- LEAF NODE -->
+     	<li id='[% val.passed %]--[% val.class %]--[% val.oid %]'>[% val.class %] [% val.oid %]</li>
+    [% END %] 
+  [% END %]
+  </ul></li>
+[% END %]
+</ul>
+</div>
