@@ -5,9 +5,6 @@ use GDxBase::Persistable::Folder;
 use GDxBase::DBHandler;
 use Data::Dumper;
 
-get '/' => sub {
-    template 'index';
-};
 
 get '/workbench/' => sub {
     my $ini_file = config->{CONFIG}; # config 
@@ -24,6 +21,11 @@ get '/workbench/' => sub {
        'visibility' => 'Public',
        'project' => 'Immunobase'
     };
+};
+
+post '/workbench/' => sub {
+	return GDxBase::Persistable->get_preferred_name(
+	         params->{folderId}, params->{perlClass});
 };
 
 sub treeObject2Hash {
@@ -99,10 +101,5 @@ sub getChildNodeTree {
     }
     return -1;
 }
-
-post '/workbench/' => sub {
-	return GDxBase::Persistable->get_preferred_name(
-	         params->{folderId}, params->{perlClass});
-};
 
 true;
