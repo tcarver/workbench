@@ -25,4 +25,10 @@ post '/workbench/' => sub {
 	         params->{folderId}, params->{perlClass});
 };
 
+post '/workbench/gene_details/' => sub {
+	my $gene = new GDxBase::Persistable::CompoundGene(locus_link_id => params->{folderId});
+	debug($gene);
+	return  to_json { ensid => $gene->ensembl_id_all };
+};
+
 true;
