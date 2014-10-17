@@ -1,6 +1,105 @@
 (function( gdxbase_workbench, $, undefined ) {
 
-	gdxbase_workbench.openFolderNode = function(data, jsTreeId){ 
+	gdxbase_workbench.init = function(jsTreeId) {
+		$('#'+jsTreeId).jstree({
+	   		'core' : {'check_callback' : true }
+	    })
+	    .on("before_open.jstree", function (e, data) {
+	      	openFolderNode(data, jsTreeId);
+	 	}).on('hover_node.jstree',function(e,data){
+	 		getDetailsTxt(data.node);
+	 	}).delegate("a","click", function(e) {
+	      	if ($("#jstree-div").jstree("is_leaf", this)) {
+	          	document.location.href = this;
+	      	} else {
+	        	$("#jstree-div").jstree("toggle_node", this);
+	    	}
+	   	});
+		$('#'+jsTreeId).show();
+	}
+	
+	
+	function getDetailsTxt (node) {
+
+		var parts = node.id.split('--');
+		if(parts.length === 1) // sub-folder
+			return;
+
+		var url;
+		var params;
+		if(node.id.indexOf("GDxBase__Persistable__CompoundGene")) {
+			params = {folderId : parts[2]};
+			url = "/workbench/gene_details/";
+		} else {
+			return node.id;
+		}
+
+		$.ajax({
+			url: url,
+			type: 'POST',
+			data: params,
+			success: function(result,status){
+				var json = JSON.parse(result);
+				console.log(json);
+				var txt = '';
+				for (var i = 0; i < json.ensid.length; i++) {
+					txt += json.ensid[i] + ' ';
+				}
+				$("#"+node.id).prop('title', txt);
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown){
+				console.log('error');
+			}
+		});
+		
+		
+/*		console.log(data.instance.get_node(data.node, true).find('span'));
+		
+ 		data.instance.get_node(data.node, true).find('span').qtip({
+			content: {
+				text: "Loading...Please wait...",
+				title: {
+					//text: 'PhenoTags Overview for ' + $(this).attr('title'),
+					text:' ',
+					button: true
+				},
+				ajax: {
+					url: url,
+					type: 'POST',
+					data: params,
+					success: function(result,status){
+						var json = JSON.parse(result);
+						console.log(json);
+						var txt = '';
+						for (var i = 0; i < json.ensid.length; i++) {
+							txt += json.ensid[i] + ' ';
+						}
+						//$("#"+node.id).prop('title', txt);
+					},
+					error: function(XMLHttpRequest, textStatus, errorThrown){
+						console.log('error');
+					}
+				}
+			},
+			position: {
+				my: 'top center',
+				at: 'bottom center',
+				viewport: $(window), // Keep the tooltip on-screen at all times
+				effect: false // Disable positioning animation
+			},
+			show: {
+				event: 'click',
+				solo: true // Only show one tooltip at a time
+			},
+			hide: 'unfocus',
+			style: {
+				classes: 'qtip-help qtip-shadow qtip-rounded ',
+				width:300
+			}
+		});*/
+	}
+	
+	function openFolderNode (data, jsTreeId){ 
       	var children = data.node.children;
 		for (var i = 0; i < children.length; i++) {
 			var parts = children[i].split('--');
