@@ -5,7 +5,8 @@
 <meta http-equiv="Content-type" content="text/html; charset=[% settings.charset %]" />
 <title>WorkBench</title>
 
-<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css?1412239857" rel="stylesheet">
+<link href="//cdn.jsdelivr.net/qtip2/2.2.0/jquery.qtip.min.css?1412239905" rel="stylesheet" type="text/css" />
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 <link rel="stylesheet" href="[% request.uri_base %]/css/style.jstree.css" />
 
 
@@ -13,6 +14,7 @@
 <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 <script src="[% request.uri_base %]/javascripts/jstree.min.js"></script>
 <script src="[% request.uri_base %]/javascripts/workbench.js"></script>
+<script language="text/javascript" type="text/javascript" src="//cdn.jsdelivr.net/qtip2/2.2.0/jquery.qtip.min.js"></script>
 
 <script type="text/javascript">/* <![CDATA[ */
     !window.jQuery && document.write('<script type="text/javascript" src="[% request.uri_base %]/javascripts/jquery.min.js"><\/script>')
