@@ -7,20 +7,20 @@ use Data::Dumper;
 
 
 get '/workbench/' => sub {
-    my $ini_file = config->{CONFIG}; # config 
+	my $ini_file = config->{CONFIG}; # config 
 	my $dbhandler = GDxBase::Dispatcher->default_environment( $ini_file );
 	GDxBase::Persistable::Folder->dbh(
                 $dbhandler->get_dbh( section => 'WORKSPACE' ) );
 
-    my $where = "visibility='public'";
+	my $where = "visibility='public'";
 	my @objs  = GDxBase::Persistable::Folder->fetch_all( where => $where );
 	my %tree  = treeObject2Hash(\@objs);
 
-    template 'workbench', {
-       'tree' => \%tree,
-       'visibility' => 'Public',
-       'project' => 'Immunobase'
-    };
+	template 'workbench', {
+		'tree' => \%tree,
+		'visibility' => 'Public',
+		'project' => 'Immunobase'
+	};
 };
 
 post '/workbench/' => sub {
