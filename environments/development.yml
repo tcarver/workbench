@@ -26,5 +26,5 @@ show_errors: 1
 # OR TINY KITTENS SHALL DIE WITH LOTS OF SUFFERING
 auto_reload: 0
 
-CONFIG: /var/www/gdxbase/immunobase_w_GDxBase/conf/Variables.pm
-#CONFIG: /var/www/gdxbase/t1dbase_w_GDxBase/conf/Variables.pm
+#CONFIG: /var/www/gdxbase/immunobase_w_GDxBase/conf/Variables.pm
+CONFIG: /var/www/gdxbase/t1dbase_w_GDxBase/conf/Variables.pm

@@ -5,25 +5,25 @@
 });
 </script>
 
-<i class="fa fa-home"></i> <b>[% visibility %] [% project %] Lists</b>
 <div id="workbench_jstree" style="display: none;">
-<ul>
+<i class="fa fa-home"></i> <b>[% visibility %] [% project %] Lists</b>
+<ul class="fa-ul">
 [% FOREACH folder IN tree.keys %]
-  <li>[% folder %] <em>([% tree.$folder.size %] items)</em> <span class="details fa fa-info-circle"></span>
-  <ul>
+  <li><i class="fa-li fa fa-folder"></i>[% folder %] <em>([% tree.$folder.size %] items)</em> <span class="details fa fa-info-circle"></span>
+  <ul class="fa-ul">
   [% FOREACH val IN tree.$folder %]
   	[% IF val.child %] <!-- SUB-FOLDER -->
   		[% subtree = val.child %]
   		[% FOREACH childfolder IN subtree.keys %]
-  			<li>[% childfolder %] <em>([% subtree.$childfolder.size %] items)</em> <span class="fa fa-info-circle"></span>
-			<ul>
+  			<li><i class="fa-li fa fa-folder"></i>[% childfolder %] <em>([% subtree.$childfolder.size %] items)</em> <span class="fa fa-info-circle"></span>
+			<ul class="fa-ul">
   			[% FOREACH leaf IN subtree.$childfolder %]
-  				<li id='[% leaf.passed %]--[% leaf.class %]--[% leaf.oid %]'>[% leaf.class %] [% leaf.oid %]</li>
+  				<li id='[% leaf.passed %]--[% leaf.class %]--[% leaf.oid %]'><i class="fa-li fa fa-file"></i>[% leaf.class %] [% leaf.oid %]</li>
   			[% END %]
   			</ul></li>
   		[% END %]
   	[% ELSE %] <!-- LEAF NODE -->
-     	<li title='[% val.oid %]' id='[% val.passed %]--[% val.class %]--[% val.oid %]'>[% val.class %] [% val.oid %]</li>
+     	<li id='[% val.passed %]--[% val.class %]--[% val.oid %]'><i class="fa-li fa fa-file"></i>[% val.class %] [% val.oid %]</li>
     [% END %] 
   [% END %]
   </ul></li>

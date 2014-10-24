@@ -1,66 +1,38 @@
 (function( gdxbase_workbench, $, undefined ) {
 
 	gdxbase_workbench.init = function(jsTreeId) {
-		$('#'+jsTreeId).jstree({
-	   		'core' : {'check_callback' : true }
-	    })
-	    .on("before_open.jstree", function (e, data) {
-	      	openFolderNode(data, jsTreeId);
-	 	}).on('hover_node.jstree',function(e,data){
-	 		getDetailsTxt(data.node);
-	 	}).delegate("a","click", function(e) {
-	      	if ($("#jstree-div").jstree("is_leaf", this)) {
-	          	document.location.href = this;
-	      	} else {
-	        	$("#jstree-div").jstree("toggle_node", this);
-	    	}
-	   	});
+		$( '#'+jsTreeId ).on( "click", 'li', function() {
+			openFolderNode(this, jsTreeId);
+		});
+		$( '#'+jsTreeId ).on( "mouseenter", 'li a', function() {
+			getDetailsTxt(this);
+		});
+		$('#'+jsTreeId).tree({'color':'darkgreen'});
 		$('#'+jsTreeId).show();
 	}
-	
-	
-	function getDetailsTxt (node) {
 
-		var parts = node.id.split('--');
+	function getDetailsTxt (node) {
+		var id = $(node).parent('li').attr('id');
+		var parts = id.split('--');
 		if(parts.length === 1) // sub-folder
 			return;
 
 		var url;
 		var params;
-		if(node.id.indexOf("GDxBase__Persistable__CompoundGene")) {
+		var title = $(node).text();
+		if(id.indexOf("GDxBase__Persistable__CompoundGene") > 0) {
 			params = {folderId : parts[2]};
 			url = "/workbench/gene_details/";
+			title += ' Gene Details';
 		} else {
-			return node.id;
+			return id;
 		}
 
-		$.ajax({
-			url: url,
-			type: 'POST',
-			data: params,
-			success: function(result,status){
-				var json = JSON.parse(result);
-				console.log(json);
-				var txt = '';
-				for (var i = 0; i < json.ensid.length; i++) {
-					txt += json.ensid[i] + ' ';
-				}
-				$("#"+node.id).prop('title', txt);
-			},
-			error: function(XMLHttpRequest, textStatus, errorThrown){
-				console.log('error');
-			}
-		});
-		
-		
-/*		console.log(data.instance.get_node(data.node, true).find('span'));
-		
- 		data.instance.get_node(data.node, true).find('span').qtip({
+		$(node).qtip({
 			content: {
 				text: "Loading...Please wait...",
 				title: {
-					//text: 'PhenoTags Overview for ' + $(this).attr('title'),
-					text:' ',
+					text:title,
 					button: true
 				},
 				ajax: {
@@ -69,12 +41,21 @@
 					data: params,
 					success: function(result,status){
 						var json = JSON.parse(result);
-						console.log(json);
 						var txt = '';
-						for (var i = 0; i < json.ensid.length; i++) {
-							txt += json.ensid[i] + ' ';
-						}
-						//$("#"+node.id).prop('title', txt);
+						$.each(json.keywords, function(index, key) {
+							txt += '<b>'+key+':</b> ';
+							for (var i = 0; i < json[key].length; i++) {
+								txt += json[key][i];
+								if(i < json[key].length-1) {
+									txt += ', ';
+								}
+							}
+							txt += '<br/>';
+						});
+						this.set('content.text', txt);
+						//$("#"+id).prop('title', txt);
+						//console.log('#qtip-'+$(this).attr('id'));
+						$('#qtip-'+$(this).attr('id')).css("max-width","600px");
 					},
 					error: function(XMLHttpRequest, textStatus, errorThrown){
 						console.log('error');
@@ -88,7 +69,7 @@
 				effect: false // Disable positioning animation
 			},
 			show: {
-				event: 'click',
+				ready: true,
 				solo: true // Only show one tooltip at a time
 			},
 			hide: 'unfocus',
@@ -96,27 +77,25 @@
 				classes: 'qtip-help qtip-shadow qtip-rounded ',
 				width:300
 			}
-		});*/
+		});
 	}
-	
-	function openFolderNode (data, jsTreeId){ 
-      	var children = data.node.children;
-		for (var i = 0; i < children.length; i++) {
-			var parts = children[i].split('--');
-			if(parts.length === 1) // sub-folder
-				continue;
 
-			var childNode = '#'+escapeId(children[i]);
-			var perlClass= parts[1];
-			perlClass = perlClass.replace(/__/g, '::');
-			if(isInt(parts[2])) {
-				//console.log(perlClass+ ' ' +parts[2]);
-				getChildNodeName(jsTreeId, perlClass, parts[2], childNode);
-			} else {
-				var html = getHTMLLink(perlClass, parts[2], parts[2]);
-				$('#'+jsTreeId).jstree("rename_node", childNode, html);
-			}
-		}
+	function openFolderNode (data, jsTreeId){
+      	$(data).find('li').each(function( index ) {
+      	  var id = $( this ).attr('id');
+      	  if(id !== undefined) {
+      		  var parts = id.split('--');      	  
+      		  var childNode = '#'+escapeId(id);
+      		  var perlClass= parts[1];
+      		  perlClass = perlClass.replace(/__/g, '::');
+      		  if(isInt(parts[2])) {
+      			  getChildNodeName(jsTreeId, perlClass, parts[2], childNode);
+      		  } else {
+      			  var html = getHTMLLink(perlClass, parts[2], parts[2]);
+      			  updateLeaf($(childNode), html);
+      		  }
+      	  } 
+      	});
 	}
 
 	function getChildNodeName(jsTreeId, perlClass, folderId, childNode) {
@@ -129,12 +108,20 @@
 			data: params,
 			success: function(result,status){
 				var html = getHTMLLink(perlClass, result, folderId);
-				$('#'+jsTreeId).jstree("rename_node", childNode, html);
+				updateLeaf($(childNode), html);
 			},
 			error: function(XMLHttpRequest, textStatus, errorThrown){
 				console.log('error');
 			}
 		});	
+	}
+	
+	// update leaf node with the font awesome element intact
+	function updateLeaf(node,html){
+		var fontawesomeObj = node.find('.fa-li');
+		node.html('');
+		node.append(fontawesomeObj);
+		node.append(html);
 	}
 	
 	function getHTMLLink(perlClass, result, folderId) {
